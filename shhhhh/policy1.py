@@ -182,4 +182,4 @@ def main(gh_token, repo_name):
 
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv[1], os.environ["GITHUB_REPOSITORY"]))
+    sys.exit(main(os.environ["GITHUB_TOKEN"], os.environ["GITHUB_REPOSITORY"]))
