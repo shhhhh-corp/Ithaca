@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "shhhhh"
+version = "0.1.0"
+description = ""
+authors = ["Aviad Reich <aviad.r@team8.vc>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+PyGithub = "^1.55"
+toml = "^0.10.2"
+PyYAML = "^5.4.1"
+jira = "^3.0.1"
+python-dateutil = "^2.8.2"
+
+[tool.poetry.dev-dependencies]
+pudb = "^2021.1"
+ipython = "^7.25.0"
+black = "^21.7b0"
+isort = "^5.9.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
