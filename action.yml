@@ -1,12 +1,9 @@
 # action.yml
-name: 'shhhhh corp'
+
+name: 'shhhhh-corp'
 description: 'run policies and break if it breaks'
-inputs:
-  github_token:
-    description: 'GH action temp token'
-    required: true
 runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - ${{ inputs.github_token }}
+    - ${{ secrets.GITHUB_TOKEN }}
