@@ -1,6 +1,8 @@
 # action.yml
 name: 'shhhhh corp'
 description: 'run policies and break if it breaks'
+branding:
+  icon: "hash"
 inputs:
   github_token:
     description: 'GH action temp token'

@@ -7,7 +7,7 @@ from collections import Counter
 import yaml
 from github import Github, UnknownObjectException
 
-n# we're also checking for gh workflows, using the api
+# we're also checking for gh workflows, using the api
 CICD_CONFIG_FILES = ("Jenkinsfile", ".circleci/config.yml")
 
 SEC_TOOLS_LANG_SUPPORT = {
