@@ -1,5 +1,6 @@
-#!/bin/sh -l
+#!/bin/bash -x
+pwd
+ls -l
+echo $1                         # FIXME!
 
-poetry install --no-dev
-
-poetry run python -m shhhhh.policy1 $1
+python -m shhhhh.policy1 $1
