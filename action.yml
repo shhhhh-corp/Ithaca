@@ -2,7 +2,8 @@
 name: 'shhhhh corp'
 description: 'run policies and break if it breaks'
 branding:
-  icon: "hash"
+  icon: hash
+  color: grey
 inputs:
   github_token:
     description: 'GH action temp token'
