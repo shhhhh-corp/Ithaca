@@ -1,5 +1,6 @@
-#!/bin/sh -l
+#!/bin/bash -x
+cd /                      # Github's actions/checkout@v2 is `cd`ing
+                          # into /github/workspace (and deletes its
+                          # contents)
 
-poetry install --no-dev
-
-poetry run python -m shhhhh.policy1 $1
+python -m shhhhh.policy1 $1
