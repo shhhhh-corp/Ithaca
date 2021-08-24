@@ -1,5 +1,6 @@
 # coding: utf-8
 
+import json
 import os
 import sys
 from collections import Counter
@@ -167,22 +168,49 @@ def rare_committer(repo):
     return True
 
 
+def _pr(repo, gh_event):
+    return True
+
+
+def infrequent_committer(repo, gh_event):
+    return True
+
+
+def reviewed_by_expert(repo, gh_event):
+    return True
+
+
 def policy1(repo):
+    "All repos need to be private"
     return repo.private
 
 
 def policy2(repo):
+    "All repos need to be covered by a CI/CD pipeline"
     return bool(cicd_defined(repo))
 
 
 def policy3(repo):
+    "All repo piplines need to include an SCA test"
     return bool(sca_tools_installed(repo))
 
 
+def policy6(repo):
+    "All commits by non-frequebt contributers requiers an expet reviewer"
+    with open(os.environ["GITHUB_EVENT_PATH"]) as f:
+        gh_event = json.load(f)
+
+    if (pr := _pr(repo, gh_event)) and infrequent_committer(repo, gh_event):
+        return reviewed_by_expert(repo, gh_event)
+
+    return True
+
+
 POLICIES = (
-    (policy1, "All repos need to be private"),
-    (policy2, "All repos need to be covered by a CI/CD pipeline"),
-    (policy3, "All repo piplines need to include an SCA test"),
+    policy1,
+    policy2,
+    policy3,
+    policy6,
 )
 
 
@@ -204,10 +232,10 @@ repo: {repo.name}
     )
 
     # start looping here
-    for policy_idx, (fn, description) in enumerate(POLICIES):
+    for policy_idx, fn in enumerate(POLICIES):
         print(
             f"""
-Policy {policy_idx + 1}: {description}
+Policy {policy_idx + 1}: {fn.__doc__}
 repo: {repo.name}
 """
         )
@@ -219,6 +247,7 @@ repo: {repo.name}
 
         except Exception:
             import traceback
+
             traceback.print_exc()
             all_good = False
 
