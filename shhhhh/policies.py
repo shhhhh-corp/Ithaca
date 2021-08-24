@@ -3,6 +3,7 @@
 import os
 import sys
 from collections import Counter
+from distutils.util import strtobool
 
 import yaml
 from github import Github, UnknownObjectException
@@ -46,8 +47,10 @@ def repo_is_active(repo):
     return True
 
 
-def sca_tools_installed(repo, workflows):
+def sca_tools_installed(repo, workflows=None):
     sca_tools = []
+    if workflows is None:
+        workflows = cicd_defined(repo)
     # FIXME: only currently supports GH Actions
     for workflow in workflows:
         try:
@@ -172,10 +175,15 @@ def policy2(repo):
     return cicd_defined(repo)
 
 
-POLICIES = ((policy1, "All repos need to be private"),
-            (policy2, "All repos need to be covered by a CI/CD pipeline"),
-            # (policy3, "All repo piplines need to include a SCA test"),
-            )
+def policy3(repo):
+    return bool(sca_tools_installed(repo))
+
+
+POLICIES = (
+    (policy1, "All repos need to be private"),
+    (policy2, "All repos need to be covered by a CI/CD pipeline"),
+    (policy3, "All repo piplines need to include an SCA test"),
+)
 
 
 def _result_graphics(result):
@@ -188,21 +196,26 @@ def main(gh_token, repo_name, fail_build=False):
     g = Github(gh_token)
     repo = g.get_repo(repo_name)
     all_good = True
-    print(f"""
+    print(
+        f"""
 ***********************************************
 repo: {repo.name}
-***********************************************""")
+***********************************************"""
+    )
 
     # start looping here
     for policy_idx, (fn, description) in enumerate(POLICIES):
-        print(f"""
+        print(
+            f"""
 Policy {policy_idx + 1}: All repos need to be private
 repo: {repo.name}
-""")
+"""
+        )
         try:
             result = policy1(repo)  # rule1(repo) and rare_committer(repo)
         except Exception:
             import traceback
+
             traceback.print_exc()
             result = False
 
@@ -214,4 +227,4 @@ repo: {repo.name}
 
 if __name__ == "__main__":
     gh_token, fail_build = sys.argv[1:3]
-    sys.exit(main(gh_token, os.environ["GITHUB_REPOSITORY"], fail_build))
+    sys.exit(main(gh_token, os.environ["GITHUB_REPOSITORY"], strtobool(fail_build)))
