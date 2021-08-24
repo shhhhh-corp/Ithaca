@@ -170,7 +170,7 @@ def policy1(repo):
 
 
 def _result_graphics(repo_name, result):
-    return """************
+    return f"""************
 *** {if result "PASS" else "FAIL"} ***
 ************"""
 
@@ -187,7 +187,8 @@ repo: {repo.name}
     # start looping here
     print(f"""
 Policy 1: All repos need to be private
-repo: {repo.name}""")
+repo: {repo.name}
+""")
     try:
         result = policy1(repo)  # rule1(repo) and rare_committer(repo)
     except Exception:
