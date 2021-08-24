@@ -1,8 +1,10 @@
 # coding: utf-8
 
+import json
 import os
 import sys
 from collections import Counter
+from datetime import datetime, timedelta
 from distutils.util import strtobool
 
 import yaml
@@ -167,22 +169,100 @@ def rare_committer(repo):
     return True
 
 
+def is_pr(gh_event):
+    return "pull_request" in gh_event
+
+
+def infrequent_committer(repo, gh_event):
+    pr_num = gh_event["pull_request"]["number"]
+    pr = repo.get_pull(pr_num)
+    committers_to_this_pr = {commit.committer for commit in pr.get_commits()}
+
+    # the "target" of this PR. The "last" commit on the target/base branch
+    base_sha = pr.base.sha
+
+    # commiters to base (i.e "main") branch:
+    past_commiters = Counter(
+        commit.committer
+        for commit in repo.get_commits(
+            base_sha, since=datetime.now() - timedelta(days=365)
+        )
+    )
+
+    for pr_committer in committers_to_this_pr:
+        # this committer has at least 2 commits already merged to the
+        # base branch
+        if past_commiters[pr_committer] < 2:
+            offender = (
+                pr_committer.login if hasattr(pr_committer, "login") else pr_committer
+            )
+            print(f"{offender} is a rare committer - requires expert review for code")
+            return True
+
+    return False
+
+
+def _experts(repo, gh_event):
+    """
+    According to their past commits NUMBER, expert are the 4 most prolific committers."""
+    # FIXME: implement real logic here
+    # the "target" of this PR. The "last" commit on the target/base branch
+    base_sha = gh_event["pull_request"]["base"]["sha"]
+
+    # commiters to base (i.e "main") branch:
+    past_commiters = Counter(
+        commit.committer
+        for commit in repo.get_commits(
+            base_sha, since=datetime.now() - timedelta(days=365)
+        )
+    )
+    MAGIC = 4
+    return past_commiters.most_common(MAGIC)
+
+
+def reviewed_by_expert(repo, gh_event):
+    experts = _experts(repo, gh_event)
+    pr_num = gh_event["pull_request"]["number"]
+    pr = repo.get_pull(pr_num)
+    for review in pr.get_reviews():
+        if review.user in experts and review.state == "APPROVED":
+            return True
+
+    print("No expert reviewer approved this PR (yet?)")
+    return False
+
+
 def policy1(repo):
+    "All repos need to be private"
     return repo.private
 
 
 def policy2(repo):
+    "All repos need to be covered by a CI/CD pipeline"
     return bool(cicd_defined(repo))
 
 
 def policy3(repo):
+    "All repo piplines need to include an SCA test"
     return bool(sca_tools_installed(repo))
 
 
+def policy6(repo):
+    "All commits by non-frequebt contributers requiers an expet reviewer"
+    with open(os.environ["GITHUB_EVENT_PATH"]) as f:
+        gh_event = json.load(f)
+
+    if is_pr(gh_event) and infrequent_committer(repo, gh_event):
+        return reviewed_by_expert(repo, gh_event)
+
+    return True
+
+
 POLICIES = (
-    (policy1, "All repos need to be private"),
-    (policy2, "All repos need to be covered by a CI/CD pipeline"),
-    (policy3, "All repo piplines need to include an SCA test"),
+    policy1,
+    policy2,
+    policy3,
+    policy6,
 )
 
 
@@ -204,10 +284,10 @@ repo: {repo.name}
     )
 
     # start looping here
-    for policy_idx, (fn, description) in enumerate(POLICIES):
+    for policy_idx, fn in enumerate(POLICIES):
         print(
             f"""
-Policy {policy_idx + 1}: {description}
+Policy {policy_idx + 1}: {fn.__doc__}
 repo: {repo.name}
 """
         )
@@ -219,6 +299,7 @@ repo: {repo.name}
 
         except Exception:
             import traceback
+
             traceback.print_exc()
             all_good = False
 
