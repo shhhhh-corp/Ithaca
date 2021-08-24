@@ -168,6 +168,15 @@ def policy1(repo):
     return repo.private
 
 
+def policy2(repo):
+    return cicd_defined(repo)
+
+
+POLICIES = ((policy1, "All repos need to be private"),
+            (policy2, "All repos need to be covered by a CI/CD pipeline"),
+            # (policy3, "All repo piplines need to include a SCA test"),
+            )
+
 
 def _result_graphics(result):
     return f"""************
@@ -175,7 +184,7 @@ def _result_graphics(result):
 ************"""
 
 
-def main(gh_token, repo_name):
+def main(gh_token, repo_name, fail_build=False):
     g = Github(gh_token)
     repo = g.get_repo(repo_name)
     all_good = True
@@ -185,23 +194,24 @@ repo: {repo.name}
 ***********************************************""")
 
     # start looping here
-    print(f"""
-Policy 1: All repos need to be private
+    for policy_idx, (fn, description) in enumerate(POLICIES):
+        print(f"""
+Policy {policy_idx}: All repos need to be private
 repo: {repo.name}
 """)
-    try:
-        result = policy1(repo)  # rule1(repo) and rare_committer(repo)
-    except Exception:
-        import traceback
+        try:
+            result = policy1(repo)  # rule1(repo) and rare_committer(repo)
+        except Exception:
+            import traceback
+            traceback.print_exc()
+            result = False
 
-        traceback.print_exc()
-        result = False
-
-    print(_result_graphics(result))
-    all_good &= result
+        print(_result_graphics(result))
+        all_good &= result
 
     return 0 if all_good else 1
 
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv[1], os.environ["GITHUB_REPOSITORY"]))
+    gh_token, fail_build = sys.argv[1:3]
+    sys.exit(main(gh_token, os.environ["GITHUB_REPOSITORY"], fail_build))

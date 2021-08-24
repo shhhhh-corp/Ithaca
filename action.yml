@@ -8,8 +8,12 @@ inputs:
   github_token:
     description: 'GH action temp token'
     required: true
+  cause_build_to_fail:
+    description: 'When a policy is not kept, should the whole build fail?'
+    default: false
 runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
     - ${{ inputs.github_token }}
+    - ${{ inputs.cause_build_to_fail }}
