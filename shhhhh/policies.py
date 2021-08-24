@@ -172,7 +172,7 @@ def policy1(repo):
 
 
 def policy2(repo):
-    return cicd_defined(repo)
+    return bool(cicd_defined(repo))
 
 
 def policy3(repo):
@@ -207,20 +207,20 @@ repo: {repo.name}
     for policy_idx, (fn, description) in enumerate(POLICIES):
         print(
             f"""
-Policy {policy_idx + 1}: All repos need to be private
+Policy {policy_idx + 1}: {description}
 repo: {repo.name}
 """
         )
         try:
-            result = policy1(repo)  # rule1(repo) and rare_committer(repo)
+            result = fn(repo)
+            print(_result_graphics(result))
+            sys.stdout.flush()
+            all_good &= result
+
         except Exception:
             import traceback
-
             traceback.print_exc()
-            result = False
-
-        print(_result_graphics(result))
-        all_good &= result
+            all_good = False
 
     return 0 if all_good else 1
 
