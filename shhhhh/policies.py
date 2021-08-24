@@ -196,7 +196,7 @@ repo: {repo.name}
     # start looping here
     for policy_idx, (fn, description) in enumerate(POLICIES):
         print(f"""
-Policy {policy_idx}: All repos need to be private
+Policy {policy_idx + 1}: All repos need to be private
 repo: {repo.name}
 """)
         try:
