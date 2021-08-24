@@ -222,7 +222,10 @@ repo: {repo.name}
             traceback.print_exc()
             all_good = False
 
-    return 0 if all_good else 1
+    if fail_build:
+        return 0 if all_good else 1
+    else:
+        return 0
 
 
 if __name__ == "__main__":
