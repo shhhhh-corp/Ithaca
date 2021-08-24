@@ -176,6 +176,8 @@ def policy2(repo):
 
 
 def policy3(repo):
+    dbg = sca_tools_installed(repo)
+    print(f"pol3: {dbg}, {bool(dbg)}")
     return bool(sca_tools_installed(repo))
 
 
@@ -207,7 +209,7 @@ repo: {repo.name}
     for policy_idx, (fn, description) in enumerate(POLICIES):
         print(
             f"""
-Policy {policy_idx + 1}: All repos need to be private
+Policy {policy_idx + 1}: {description}
 repo: {repo.name}
 """
         )
