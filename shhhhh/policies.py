@@ -169,9 +169,9 @@ def policy1(repo):
 
 
 
-def _result_graphics(repo_name, result):
-    return """************
-*** {if result "PASS" else "FAIL"} ***
+def _result_graphics(result):
+    return f"""************
+*** {'PASS' if result else 'FAIL'} ***
 ************"""
 
 
@@ -187,7 +187,8 @@ repo: {repo.name}
     # start looping here
     print(f"""
 Policy 1: All repos need to be private
-repo: {repo.name}""")
+repo: {repo.name}
+""")
     try:
         result = policy1(repo)  # rule1(repo) and rare_committer(repo)
     except Exception:
@@ -196,7 +197,7 @@ repo: {repo.name}""")
         traceback.print_exc()
         result = False
 
-    print(_result_graphics(repo.name, result))
+    print(_result_graphics(result))
     all_good &= result
 
     return 0 if all_good else 1
