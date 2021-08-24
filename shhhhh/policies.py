@@ -164,21 +164,42 @@ def rare_committer(repo):
     return True
 
 
+def policy1(repo):
+    return repo.private
+
+
+
+def _result_graphics(repo_name, result):
+    return """************
+*** {if result "PASS" else "FAIL"} ***
+************"""
+
+
 def main(gh_token, repo_name):
     g = Github(gh_token)
     repo = g.get_repo(repo_name)
-    print("=" * 40)
-    print(repo.name)
+    all_good = True
+    print(f"""
+***********************************************
+repo: {repo.name}
+***********************************************""")
+
+    # start looping here
+    print(f"""
+Policy 1: All repos need to be private
+repo: {repo.name}""")
     try:
-        result = rule1(repo) and rare_committer(repo)
+        result = policy1(repo)  # rule1(repo) and rare_committer(repo)
     except Exception:
         import traceback
 
         traceback.print_exc()
         result = False
 
-    print(repo.name, "DECISION:", result)
-    return 0 if result else 1
+    print(_result_graphics(repo.name, result))
+    all_good &= result
+
+    return 0 if all_good else 1
 
 
 if __name__ == "__main__":

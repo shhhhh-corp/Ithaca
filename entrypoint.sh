@@ -3,4 +3,4 @@ cd /                      # Github's actions/checkout@v2 is `cd`ing
                           # into /github/workspace (and deletes its
                           # contents)
 
-python -m shhhhh.policy1 $1
+python -m shhhhh.policies $1
