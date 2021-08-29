@@ -248,7 +248,7 @@ def policy3(repo):
 
 
 def policy6(repo):
-    "All commits by non-frequebt contributers requiers an expet reviewer"
+    "All commits by non-frequent contributers requiers an expet reviewer's approval"
     with open(os.environ["GITHUB_EVENT_PATH"]) as f:
         gh_event = json.load(f)
 
