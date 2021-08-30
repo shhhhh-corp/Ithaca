@@ -247,6 +247,25 @@ def policy3(repo):
     return bool(sca_tools_installed(repo))
 
 
+def policy4(repo):
+    "The SCA checks in the pipeline must cover all repo programing languages"
+    repo_languages = set(repo.get_languages())
+
+    sectools = [step["uses"].split("@")[0] for tool in sca_tools_installed(repo)]
+    covered_languages = set(SEC_TOOLS_LANG_SUPPORT[tool] for tool in sectools)
+
+    if uncovered := repo_languages - covered_languages:
+        single_lang = len(uncovered) == 1
+        print(
+            f"{repo.name} has{' a' if single_lang else ''} programming "
+            f"language{'s' if not single_lang else ''} ({' '.join(uncovered)}) "
+            "not covered by any SCA tool"
+        )
+        return False
+
+    return True
+
+
 def policy6(repo):
     "All commits by non-frequent contributers requiers an expet reviewer's approval"
     with open(os.environ["GITHUB_EVENT_PATH"]) as f:
@@ -258,10 +277,12 @@ def policy6(repo):
     return True
 
 
+# did not feel like writing a decorator for this very simple list
 POLICIES = (
     policy1,
     policy2,
     policy3,
+    policy4,
     policy6,
 )
 
