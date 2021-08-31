@@ -82,7 +82,7 @@ def approved_pipeline(state):
     if workflows := cicd_defined(repo):
         state["workflows"] = workflows
     else:
-        print(f"{repo.name} has no approved pipeline (no workflows found)")
+        print(f"{repo.full_name} has no approved pipeline (no workflows found)")
         state["stop"] = True
         return state
 
@@ -91,7 +91,7 @@ def approved_pipeline(state):
             state["sca"] = scas
             return state
         else:
-            print(f"{repo.name} has no sca tools installed")
+            print(f"{repo.full_name} has no sca tools installed")
 
     state["stop"] = True
     return state
@@ -104,7 +104,7 @@ def sectool_supports_language(state):
     for step in sectools:
         tool = step["uses"].split("@")[0]
         if SEC_TOOLS_LANG_SUPPORT[tool] not in repo_languages:
-            print(f"{repo.name} has an SCA tool with language misconfigured - {tool}")
+            print(f"{repo.full_name} has an SCA tool with language misconfigured - {tool}")
             state["stop"] = True
 
     return state
@@ -251,14 +251,14 @@ def policy4(repo):
     "The SCA checks in the pipeline must cover all repo programing languages"
     repo_languages = set(repo.get_languages())
 
-    sectools = [step["uses"].split("@")[0] for tool in sca_tools_installed(repo)]
+    sectools = [step["uses"].split("@")[0] for step in sca_tools_installed(repo)]
     covered_languages = set(SEC_TOOLS_LANG_SUPPORT[tool] for tool in sectools)
 
     if uncovered := repo_languages - covered_languages:
         single_lang = len(uncovered) == 1
         print(
-            f"{repo.name} has{' a' if single_lang else ''} programming "
-            f"language{'s' if not single_lang else ''} ({' '.join(uncovered)}) "
+            f"{repo.full_name} has{' a' if single_lang else ''} programming "
+            f"language{'s' if not single_lang else ''} ({', '.join(uncovered)}) "
             "not covered by any SCA tool"
         )
         return False
@@ -266,8 +266,28 @@ def policy4(repo):
     return True
 
 
+def policy5(repo):
+    "SCA findings of high and above are not allowed"
+    result = True
+    for step in sca_tools_installed(repo):
+        if not (step["uses"].split("@")[0]).startswith('snyk/actions'):
+            # FIXME: only snyk is supported
+            continue
+        args = step['args']
+        if "--severity-threshold=critical" in args:
+            print(f"Snyk scan allows finding of severity \"high\" in step: {step.get('name', step.get('uses'))}")
+            result = False
+
+    return result
+
 def policy6(repo):
     "All commits by non-frequent contributers requiers an expet reviewer's approval"
+    if 'GITHUB_EVENT_PATH' not in os.environ:
+        # not called from withing a github action. i.e from external script.
+        # No commit so skipping
+        print("Skipped, since this is not a pr")
+        return True
+
     with open(os.environ["GITHUB_EVENT_PATH"]) as f:
         gh_event = json.load(f)
 
@@ -300,7 +320,7 @@ def main(gh_token, repo_name, fail_build=False):
     print(
         f"""
 ***********************************************
-repo: {repo.name}
+repo: {repo.full_name}
 ***********************************************"""
     )
 
@@ -309,7 +329,7 @@ repo: {repo.name}
         print(
             f"""
 Policy {policy_idx + 1}: {fn.__doc__}
-repo: {repo.name}
+repo: {repo.full_name}
 """
         )
         try:
