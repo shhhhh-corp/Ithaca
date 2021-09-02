@@ -104,7 +104,9 @@ def sectool_supports_language(state):
     for step in sectools:
         tool = step["uses"].split("@")[0]
         if SEC_TOOLS_LANG_SUPPORT[tool] not in repo_languages:
-            print(f"{repo.full_name} has an SCA tool with language misconfigured - {tool}")
+            print(
+                f"{repo.full_name} has an SCA tool with language misconfigured - {tool}"
+            )
             state["stop"] = True
 
     return state
@@ -270,19 +272,22 @@ def policy5(repo):
     "SCA findings of high and above are not allowed"
     result = True
     for step in sca_tools_installed(repo):
-        if not (step["uses"].split("@")[0]).startswith('snyk/actions'):
+        if not (step["uses"].split("@")[0]).startswith("snyk/actions"):
             # FIXME: only snyk is supported
             continue
-        args = step['args']
+        args = step["args"]
         if "--severity-threshold=critical" in args:
-            print(f"Snyk scan allows finding of severity \"high\" in step: {step.get('name', step.get('uses'))}")
+            print(
+                f"Snyk scan allows findings of severity \"high\" in step: {step.get('name', step.get('uses'))}"
+            )
             result = False
 
     return result
 
+
 def policy6(repo):
     "All commits by non-frequent contributers requiers an expet reviewer's approval"
-    if 'GITHUB_EVENT_PATH' not in os.environ:
+    if "GITHUB_EVENT_PATH" not in os.environ:
         # not called from withing a github action. i.e from external script.
         # No commit so skipping
         print("Skipped, since this is not a pr")

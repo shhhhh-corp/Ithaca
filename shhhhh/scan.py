@@ -2,7 +2,8 @@ import sys
 
 from github import Github
 
-from shhhhh.policies import main as scan_repo, POLICIES
+from shhhhh.policies import POLICIES
+from shhhhh.policies import main as scan_repo
 
 
 def get_repos(gh_token):
@@ -11,7 +12,9 @@ def get_repos(gh_token):
 
 
 def print_repos(repos):
-    print(f"{len(repos)} repos detected:\n{', '.join(repo.full_name for repo in repos)}")
+    print(
+        f"{len(repos)} repos detected:\n{', '.join(repo.full_name for repo in repos)}"
+    )
 
 
 def print_policies():
