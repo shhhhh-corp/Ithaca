@@ -6,15 +6,20 @@ from shhhhh.policies import POLICIES
 from shhhhh.policies import main as scan_repo
 
 
-def get_repos(gh_token):
+def get_repos(gh_token, org_name=None):
     g = Github(gh_token)
-    return g.get_user().get_repos()
+    user = g.get_user()
+    if org_name:
+        [org] = [o for o in user.get_orgs() if o.login == org_name]
+        return org.get_repos()
+
+    return user.get_repos()
 
 
 def print_repos(repos):
-    print(
-        f"{len(repos)} repos detected:\n{', '.join(repo.full_name for repo in repos)}"
-    )
+    print("repos detected:")
+    for i, repo in enumerate(repos):
+        print(f"{i+1}. {repo.full_name}")
 
 
 def print_policies():
@@ -23,9 +28,10 @@ def print_policies():
 
 
 def main(gh_token):
-    repos = list(get_repos(gh_token))
+    repos = list(get_repos(gh_token, org_name="sirius-cybernetics-corp"))
     print_repos(repos)
     print("-" * 20)
+    print()
 
     print_policies()
     print("-" * 20)
