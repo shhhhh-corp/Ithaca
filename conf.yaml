@@ -1,0 +1,163 @@
+# Ox Security policy file
+
+#### TODO
+# split action notification by target audiance
+# add CSPM
+
+
+org_details:
+    name: sirius-cybernetics-corp
+
+
+Policies:
+    - Policy:
+        Name: private_repos
+        Description: All repositories must be private
+        Author: Lior Arzi
+        lastChangeDate: 08-29-2021
+        Version: 1.0.0
+        Code: private_repos
+    - Policy:
+        Name: valid_CICD
+        Description: All repositories must have a valid CICD
+        Author: Lior Arzi
+        lastChangeDate: 08-29-2021
+        Version: 1.0.0
+        Code: valid_cicd
+    - Policy:
+        Name: SCA_in_CICD
+        Description: All repositories must include SCA in the CICD pipeline
+        Author: Lior Arzi
+        lastChangeDate: 08-29-2021
+        Version: 1.0.0
+        Code: sca_in_cicd
+    - Policy:
+        Name: SCA_lang_coverage
+        Description: The SCA check in the pipeline need to cover all repositories programing languages
+        Author: Lior Arzi
+        lastChangeDate: 08-29-2021
+        Version: 1.0.0
+        Code: sca_lang
+    - Policy:
+        Name: SCA_severity
+        Description: severe SCA findings are not allowed
+        Author: Lior Arzi
+        lastChangeDate: 08-29-2021
+        Version: 1.0.0
+        Code: sca_severity
+    - Policy:
+        Name: non_freq_committer
+        Description: All commits by non-frequebt contributers requiers an expet reviewer
+        Author: Lior Arzi
+        lastChangeDate: 08-29-2021
+        Version: 1.0.0
+        Code: non_freq_committer
+    - Policy:
+        Name: SCA_finding_TTL
+        Description: All SCA finsing need to be handled within the TTL
+        Author: Lior Arzi
+        lastChangeDate: 08-29-2021
+        Version: 1.0.0
+        Code: sca_ttl
+    - Policy:
+        Name: design_review
+        Description: All repositories requiers a design review
+        Author: Lior Arzi
+        lastChangeDate: 08-29-2021
+        Version: 1.0.0
+        Code: design_review
+    - Policy:
+        Name: CSPM1  ###### need to add policy
+        Description: CSPM1
+        Author: Lior Arzi
+        lastChangeDate: 08-29-2021
+        Version: 1.0.0
+        Code: cspm1
+    - Policy:
+        Name: CSPM2  ###### need to add policy
+        Description: CSPM2
+        Author: Lior Arzi
+        lastChangeDate: 08-29-2021
+        Version: 1.0.0
+        Code: cspm2
+
+OrgPolicy:
+    PolicyMetadata:
+        Name: Acme policy rules
+        Description: policy for Acme prod env.
+        Author: Lior Arzi
+        lastChangeDate: 08-29-2021
+        Version: 1.0.0
+    PolicyRules:
+        private_repos:
+            Params:
+                Exceptions:
+                    open-source*
+            Trigger: Daily
+            Severity: Critical
+            Action:
+                - Block
+                - SlackNotification
+                - JiraTicket
+        valid_CICD:
+            Params:
+                ApprovedCICD:
+                  - GitHub
+                  - CircleCI
+            Trigger: RepoPR
+            Severity: High
+            Action:
+                - SlackNotification
+                - JiraTicket
+        CSA_in_CICD:
+            Params:
+                ApprovedSCA:
+                  - Snyk
+                  - WhiteSource
+            Trigger: RepoPR
+            Severity: High
+            Action:
+                - SlackNotification
+                - JiraTicket
+        SCA_lang_coverage:
+            Params:
+            Trigger: RepoPR
+            Severity: High
+            Action:
+                - SlackNotification
+                - JiraTicket
+        SCA_severity:
+            Params:
+                MaxSeverity:
+                  - High
+            Trigger: RepoPR
+            Severity: pass_from_action
+            Action:
+                - Block
+                - SlackNotification
+                - JiraTicket
+        non_freq_committer:
+            Params:
+                MinimalCommits:
+                    Number: 3
+                    Period: 1y
+            Trigger: RepoPR
+            Severity: Medium
+            Action:
+                - Block
+                - CodeReview
+        SCA_finding_TTL:
+            Params:
+                SCARequieredHandlingTime: 2d
+            Trigger: RepoPR
+            Severity: pass_from_action
+            Action:
+                JiraTicketEscalation
+        design_review:
+            Params:
+                DesignReviewJiraFormat:
+                    Name: DR - <RepoName>
+            Trigger: Daily
+            Severity: High
+            Action:
+                JiraTicketEscalation
