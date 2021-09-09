@@ -234,22 +234,22 @@ def reviewed_by_expert(repo, gh_event):
     return False
 
 
-def policy1(repo):
+def private_repos(repo):
     "All repos need to be private"
     return repo.private
 
 
-def policy2(repo):
+def valid_cicd(repo):
     "All repos need to be covered by a CI/CD pipeline"
     return bool(cicd_defined(repo))
 
 
-def policy3(repo):
+def sca_in_cicd(repo):
     "All repo piplines need to include an SCA test"
     return bool(sca_tools_installed(repo))
 
 
-def policy4(repo):
+def sca_lang(repo):
     "The SCA checks in the pipeline must cover all repo programing languages"
     repo_languages = set(repo.get_languages())
 
@@ -268,7 +268,7 @@ def policy4(repo):
     return True
 
 
-def policy5(repo):
+def sca_severity(repo):
     "SCA findings of high and above are not allowed"
     result = True
     for step in sca_tools_installed(repo):
@@ -285,7 +285,7 @@ def policy5(repo):
     return result
 
 
-def policy6(repo):
+def non_freq_committer(repo):
     "All commits by non-frequent contributers requiers an expet reviewer's approval"
     if "GITHUB_EVENT_PATH" not in os.environ:
         # not called from withing a github action. i.e from external script.
@@ -302,14 +302,13 @@ def policy6(repo):
     return True
 
 
-# did not feel like writing a decorator for this very simple list
-POLICIES = (
-    policy1,
-    policy2,
-    policy3,
-    policy4,
-    policy6,
-)
+def design_review(repo):
+    # TODO
+    return True
+
+
+with open(os.path.join(os.path.dirname(os.path.abspath(__file__))), 'conf.yaml') as f:
+    POLICIES = yaml.safe_load(f)["Policies"]
 
 
 def _result_graphics(result):
@@ -330,10 +329,14 @@ repo: {repo.full_name}
     )
 
     # start looping here
-    for policy_idx, fn in enumerate(POLICIES):
+    for policy_idx, pol in enumerate(POLICIES):
+
+        # FIXME: This ugliness is to support naming functions in the YAML.
+        fn = locals()[pol["Policy"]["Code"]]
+
         print(
             f"""
-Policy {policy_idx + 1}: {fn.__doc__}
+Policy {policy_idx + 1}: {pol["Policy"]["Description"]}
 repo: {repo.full_name}
 """
         )
