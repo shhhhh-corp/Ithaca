@@ -9,9 +9,9 @@ COPY pyproject.toml pyproject.toml
 RUN poetry export --format requirements.txt --output requirements.txt
 RUN pip install -r requirements.txt
 
-# Copies your code file from your action repository to the filesystem path `/` of the container
 COPY entrypoint.sh /entrypoint.sh
 COPY shhhhh shhhhh
+COPY conf.yaml .
 
 # Code file to execute when the docker container starts up (`entrypoint.sh`)
 ENTRYPOINT ["/entrypoint.sh"]
