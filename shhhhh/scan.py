@@ -1,5 +1,6 @@
 import sys
 
+import yaml
 from github import Github
 
 from shhhhh.policies import POLICIES
@@ -28,7 +29,11 @@ def print_policies():
 
 
 def main(gh_token):
-    repos = list(get_repos(gh_token, org_name="sirius-cybernetics-corp"))
+    with open("./conf.yaml") as f:
+        conf = yaml.safe_load(f)
+
+    org_name = conf["org_details"]["name"]
+    repos = list(get_repos(gh_token, org_name))
     print_repos(repos)
     print("-" * 20)
     print()
