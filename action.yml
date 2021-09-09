@@ -6,8 +6,7 @@ branding:
   color: 'blue'
 inputs:
   github_token:
-    description: 'GH action temp token. Supplied with "\${{ inputs.github_token }}"'
-    default: "${{ inputs.github_token }}"
+    description: 'GH action temp token. Supplied with "\$\{\{ inputs.github_token \}\}"'
     required: true
   cause_build_to_fail:
     description: 'When a policy is not kept, should the whole build fail?'
