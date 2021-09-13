@@ -275,7 +275,7 @@ def sca_severity(repo):
         if not (step["uses"].split("@")[0]).startswith("snyk/actions"):
             # FIXME: only snyk is supported
             continue
-        args = step["args"]
+        args = step.get("args", "")
         if "--severity-threshold=critical" in args:
             print(
                 f"Snyk scan allows findings of severity \"high\" in step: {step.get('name', step.get('uses'))}"

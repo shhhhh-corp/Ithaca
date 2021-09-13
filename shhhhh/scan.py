@@ -25,7 +25,7 @@ def print_repos(repos):
 
 def print_policies():
     print("Scanning using these policies:")
-    print("\n".join(pol.__doc__ for pol in POLICIES))
+    print("\n".join(pol['Policy']['Description'] for pol in POLICIES))
 
 
 def main(gh_token):
