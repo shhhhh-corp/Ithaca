@@ -336,10 +336,11 @@ def _result_graphics(result):
 ************"""
 
 
-def main(gh_token, repo_name, fail_build=False):
+def main(gh_token, repo_name, fail_build=False, scan_mode=False):
     g = Github(gh_token)
     repo = g.get_repo(repo_name)
     all_good = True
+    scan_results = []
     print(
         f"""
 ***********************************************
@@ -363,6 +364,7 @@ repo: {repo.full_name}
             result = fn(repo)
             print(_result_graphics(result))
             sys.stdout.flush()
+            scan_results.append(result)
             all_good &= result
 
         except Exception:
@@ -370,6 +372,9 @@ repo: {repo.full_name}
 
             traceback.print_exc()
             all_good = False
+
+    if scan_mode:
+        return scan_results
 
     if fail_build:
         return 0 if all_good else 1

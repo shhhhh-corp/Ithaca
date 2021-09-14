@@ -350,6 +350,14 @@ python-versions = "*"
 ptyprocess = ">=0.5"
 
 [[package]]
+name = "piccup"
+version = "0.1.1"
+description = "Render HTML from Python using plain data structures, inspired by Clojure's Hiccup"
+category = "main"
+optional = false
+python-versions = ">=3"
+
+[[package]]
 name = "pickleshare"
 version = "0.7.5"
 description = "Tiny 'shelve'-like database with concurrency support"
@@ -633,7 +641,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "e0f7f9803d90e1e9ef43e70c3bfb4aa7f422f61061845d2548001de9ad973afc"
+content-hash = "9c53e613b9eecd2bfce5a5a925a599d03839f84ddf1f63607acc77e91bf93ef8"
 
 [metadata.files]
 appdirs = [
@@ -800,6 +808,10 @@ pathspec = [
 pexpect = [
     {file = "pexpect-4.8.0-py2.py3-none-any.whl", hash = "sha256:0b48a55dcb3c05f3329815901ea4fc1537514d6ba867a152b581d69ae3710937"},
     {file = "pexpect-4.8.0.tar.gz", hash = "sha256:fc65a43959d153d0114afe13997d439c22823a27cefceb5ff35c2178c6784c0c"},
+]
+piccup = [
+    {file = "piccup-0.1.1-py3-none-any.whl", hash = "sha256:64ab6126ac8e16a504b7f20d5f728ef8b253484109ac069570c8cdafe92a698e"},
+    {file = "piccup-0.1.1.tar.gz", hash = "sha256:a0f194a73de8edc0aba235891bde726c954886f8439a6c33f1969ceac3c01e88"},
 ]
 pickleshare = [
     {file = "pickleshare-0.7.5-py2.py3-none-any.whl", hash = "sha256:9649af414d74d4df115d5d718f82acb59c9d418196b7b4290ed47a12ce62df56"},
