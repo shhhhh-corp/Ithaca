@@ -66,20 +66,20 @@ Policies:
         lastChangeDate: 08-29-2021
         Version: 1.0.0
         Code: design_review
-    - Policy:
-        Name: CSPM1  ###### need to add policy
-        Description: CSPM1
-        Author: Lior Arzi
-        lastChangeDate: 08-29-2021
-        Version: 1.0.0
-        Code: cspm1
-    - Policy:
-        Name: CSPM2  ###### need to add policy
-        Description: CSPM2
-        Author: Lior Arzi
-        lastChangeDate: 08-29-2021
-        Version: 1.0.0
-        Code: cspm2
+#    - Policy:
+#        Name: CSPM1  ###### need to add policy
+#        Description: CSPM1
+#        Author: Lior Arzi
+#        lastChangeDate: 08-29-2021
+#        Version: 1.0.0
+#        Code: cspm1
+#    - Policy:
+#        Name: CSPM2  ###### need to add policy
+#        Description: CSPM2
+#        Author: Lior Arzi
+#        lastChangeDate: 08-29-2021
+#        Version: 1.0.0
+#        Code: cspm2
 
 OrgPolicy:
     PolicyMetadata:
