@@ -104,7 +104,6 @@ table {
     print()
 
     print_policies()
-    body.append(htmlize_policies())
     print("-" * 20)
     print()
 
@@ -119,11 +118,13 @@ table {
         table_body.append(
             ['tr',
                ['th', {'scope': 'row'}, repo.full_name] +
-               [['td', {'bgcolor': 'green' if result else 'red'}, 'PASS' if result else 'FAIL'] for result in scan_results]])
+               [['td', {'bgcolor': 'lightgreen' if result else 'red'}, 'PASS' if result else 'FAIL'] for result in scan_results]])
 
 
     table = ['table', table_head, table_body]
     body.extend([['h2', 'Scan results'], table])
+
+    body.append(htmlize_policies())
 
     with open('./report.html', 'w') as f:
         f.write('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">\n')
