@@ -376,6 +376,13 @@ with open(
 ) as f:
     POLICIES = yaml.safe_load(f)["Policies"]
 
+if conf_path := os.path.exist(
+    os.path.join(os.environ.get("GITHUB_WORKSPACE", "/"), "conf.yaml")
+):
+    with open(conf_path) as f:
+        local_policies = yaml.safe_load(f)["Policies"]
+    POLICIES = {**POLICIES, **local_policies}
+
 
 def _result_graphics(result):
     return f"""************
