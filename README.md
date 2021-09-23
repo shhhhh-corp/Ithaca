@@ -8,7 +8,7 @@ In your relevant github action job, add
 
 ``` yaml
     - name: shhhhh corp
-      uses: shhhhh-corp/Ithaca@v0.7.8
+      uses: shhhhh-corp/Ithaca@v0.8.3
 ```
 
 ### Parameters
@@ -32,3 +32,20 @@ like this feature, just add the following snippet, INSTEAD of the one above:
       with:
           cause_build_to_fail: true
 ```
+
+### Jira integration
+To enable Jira integration, add the following 3 environment variables:
+
+``` yaml
+    - name: shhhhh corp
+        uses: shhhhh-corp/Ithaca@v0.8.2
+        env:
+          JIRA_URL: ${{ secrets.JIRA_URL }}
+          JIRA_ACCESS_USER: ${{ secrets.JIRA_ACCESS_USER }}
+          JIRA_ACCESS_PW: ${{ secrets.JIRA_ACCESS_PW }}
+```
+
+#### Example values
+`JIRA_URL=https://acme.atlassian.net`
+`JIRA_ACCESS_USER=myemail@acme.io`
+`JIRA_ACCESS_PW=letmein`

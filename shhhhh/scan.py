@@ -25,36 +25,46 @@ def print_repos(repos):
 
 
 def htmlize_repos(repos):
-    div = ['div']
-    div.append(['h2', 'Repos detected:'])
-    div.append(['ol', {'type': 1},
-                [['li', repo.full_name] for repo in repos]])
+    div = ["div"]
+    div.append(["h2", "Repos detected:"])
+    div.append(["ol", {"type": 1}, [["li", repo.full_name] for repo in repos]])
     return div
 
 
 def print_policies():
-    policies = [pol['Policy']['Description'] for pol in POLICIES]
+    policies = [pol["Policy"]["Description"] for pol in POLICIES]
     print("Scanning using these policies:")
     print("\n".join(policies))
     return policies
 
 
 def htmlize_policies():
-    policies = [pol['Policy']['Description'] for pol in POLICIES]
+    policies = [pol["Policy"]["Description"] for pol in POLICIES]
 
-    div = ['div']
-    div.append(['h2', 'Scanned using these policies:'])
-    div.append(['ol', {'type': 1},
-                [['li', policy] for policy in policies]])
+    div = ["div"]
+    div.append(["h2", "Scanned using these policies:"])
+    div.append(["ol", {"type": 1}, [["li", policy] for policy in policies]])
     return div
 
 
 def main(gh_token):
-    head = ['head',
-            ['title', 'Your OX report'],
-            ['link', {'rel': "stylesheet", "href": "https://cdnjs.cloudflare.com/ajax/libs/tufte-css/1.8.0/tufte.min.css", "integrity": "sha512-F5lKjC1GKbwLFXdThwMWx8yF8TX/WVrdhWYN9PWb6eb5hIRLmO463nrpqLnEUHxy2EHIzfC4dq/mncHD6ndR+g==", "crossorigin": "anonymous", "referrerpolicy": "no-referrer"}],
-            ['style', {'type': 'text/css'},
-"""
+    head = [
+        "head",
+        ["title", "Your OX report"],
+        [
+            "link",
+            {
+                "rel": "stylesheet",
+                "href": "https://cdnjs.cloudflare.com/ajax/libs/tufte-css/1.8.0/tufte.min.css",
+                "integrity": "sha512-F5lKjC1GKbwLFXdThwMWx8yF8TX/WVrdhWYN9PWb6eb5hIRLmO463nrpqLnEUHxy2EHIzfC4dq/mncHD6ndR+g==",
+                "crossorigin": "anonymous",
+                "referrerpolicy": "no-referrer",
+            },
+        ],
+        [
+            "style",
+            {"type": "text/css"},
+            """
 td,
 th {
     border: 1px solid rgb(190, 190, 190);
@@ -90,9 +100,11 @@ table {
     font-family: sans-serif;
     font-size: .8rem;
 }
-"""]]
+""",
+        ],
+    ]
 
-    body = ['body', ['h1', 'Your OX report']]
+    body = ["body", ["h1", "Your OX report"]]
     with open("./conf.yaml") as f:
         conf = yaml.safe_load(f)
 
@@ -107,31 +119,55 @@ table {
     print("-" * 20)
     print()
 
-    table_head = ['thead',
-                  ['tr',
-                   ['th', {'scope': 'col'}, 'Repo'] +
-                   [['th', {'scope': 'col'}, pol['Policy']['Name']] for pol in POLICIES]]]
-    table_body = ['tbody']
+    table_head = [
+        "thead",
+        [
+            "tr",
+            ["th", {"scope": "col"}, "Repo"]
+            + [["th", {"scope": "col"}, pol["Policy"]["Name"]] for pol in POLICIES],
+        ],
+    ]
+    table_body = ["tbody"]
 
     for repo in repos:
         scan_results = scan_repo(gh_token, repo.full_name, scan_mode=True)
         table_body.append(
-            ['tr',
-               ['th', {'scope': 'row'}, repo.full_name] +
-               [['td', {'bgcolor': 'lightgreen' if result else 'red'}, 'PASS' if result else 'FAIL'] for result in scan_results]])
+            [
+                "tr",
+                ["th", {"scope": "row"}, repo.full_name]
+                + [
+                    [
+                        "td",
+                        {"bgcolor": "lightgreen" if result else "red"},
+                        "PASS" if result else "FAIL",
+                    ]
+                    for result in scan_results
+                ],
+            ]
+        )
 
-
-    table = ['table', table_head, table_body]
-    body.extend([['h2', 'Scan results'], table])
+    table = ["table", table_head, table_body]
+    body.extend([["h2", "Scan results"], table])
 
     body.append(htmlize_policies())
 
-    with open('./report.html', 'w') as f:
-        f.write('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">\n')
-        f.write(html(['html', {"lang": "en", "xml:lang": "en",
-                               "xmlns": "http://www.w3.org/1999/xhtml"},
-                      [head,
-                       body]]))
+    with open("./report.html", "w") as f:
+        f.write(
+            '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">\n'
+        )
+        f.write(
+            html(
+                [
+                    "html",
+                    {
+                        "lang": "en",
+                        "xml:lang": "en",
+                        "xmlns": "http://www.w3.org/1999/xhtml",
+                    },
+                    [head, body],
+                ]
+            )
+        )
         print("report saved to report.html")
 
 
