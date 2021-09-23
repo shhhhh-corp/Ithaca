@@ -9,6 +9,7 @@ from distutils.util import strtobool
 
 import yaml
 from github import Github, UnknownObjectException
+from jira import JIRA
 
 # we're also checking for gh workflows, using the api
 CICD_CONFIG_FILES = ("Jenkinsfile", ".circleci/config.yml")
@@ -308,8 +309,27 @@ def sca_ttl(repo):
 
 
 def design_review(repo):
-    # TODO
-    return True
+    try:
+        jira = JIRA(
+            server=os.environ["JIRA_URL"],
+            basic_auth=(os.environ["JIRA_ACCESS_USER"], os.environ["JIRA_ACCESS_PW"]),
+        )
+        design_review_issues = jira.search_issues(
+            "(text ~ security AND text ~ review AND text ~ design) AND status = Done"
+        )
+        n_design_reviews = len(design_review_issues)
+        success = n_design_reviews > 0
+        if success:
+            issues = "\n".join([issue.permalink() for issue in design_review_issues])
+            print(f"found {n_design_reviews} security design reviews:")
+            print(issues)
+        return success
+
+    except Exception:
+        import traceback
+
+        traceback.print_exc()
+        return True  # FIXME: this is permissive.
 
 
 def cspm1(repo):
