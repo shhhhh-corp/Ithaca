@@ -4,10 +4,11 @@ import json
 import os
 import sys
 from collections import Counter
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from distutils.util import strtobool
 
 import yaml
+from dateutil.parser import parse
 from github import Github, UnknownObjectException
 from jira import JIRA
 
@@ -304,8 +305,32 @@ def non_freq_committer(repo):
 
 
 def sca_ttl(repo):
-    # TODO
-    return True
+    success = True
+    try:
+        jira = JIRA(
+            server=os.environ["JIRA_URL"],
+            basic_auth=(os.environ["JIRA_ACCESS_USER"], os.environ["JIRA_ACCESS_PW"]),
+        )
+        open_sca_issues = jira.search_issues(
+            "labels = sca AND priority >= High AND status != Done"
+        )
+        for issue in open_sca_issues:
+            more_than_2_days = (
+                datetime.now(timezone.utc) - parse(issue.fields.created)
+            ).days >= 2
+            if more_than_2_days:
+                print(
+                    "found a high severity SCA issue that was not addressed within the TTL:"
+                )
+                print(f"{issue.key} was created on {parse(issue.fields.created)}")
+                success = False
+
+    except Exception:
+        import traceback
+
+        traceback.print_exc()
+
+    return success  # FIXME: this is permissive.
 
 
 def design_review(repo):

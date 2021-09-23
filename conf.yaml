@@ -54,7 +54,7 @@ Policies:
         Code: non_freq_committer
     - Policy:
         Name: SCA_finding_TTL
-        Description: All SCA finsing need to be handled within the TTL
+        Description: All SCA findings need to be handled within the TTL
         Author: Lior Arzi
         lastChangeDate: 08-29-2021
         Version: 1.0.0
