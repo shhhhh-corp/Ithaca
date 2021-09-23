@@ -47,5 +47,7 @@ To enable Jira integration, add the following 3 environment variables:
 
 #### Example values
 `JIRA_URL=https://acme.atlassian.net`
+
 `JIRA_ACCESS_USER=myemail@acme.io`
-`JIRA_ACCESS_PW=letmein`
+
+`JIRA_ACCESS_PW=let**in`
