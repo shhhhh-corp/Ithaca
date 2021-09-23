@@ -269,6 +269,14 @@ docs = ["Sphinx (>=2.2.0)", "sphinx-rtd-theme (>=0.4.3)"]
 opt = ["filemagic (>=1.6)", "pyjwt", "requests-jwt", "requests-kerberos"]
 
 [[package]]
+name = "json2html"
+version = "1.3.0"
+description = "JSON to HTML Table Representation"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "keyring"
 version = "23.0.1"
 description = "Store and access your passwords safely."
@@ -641,7 +649,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "9c53e613b9eecd2bfce5a5a925a599d03839f84ddf1f63607acc77e91bf93ef8"
+content-hash = "0b58d3e7c774aa4c4afab8f0e82df4061da9f760c4016ad2b0e006a8eb0e6062"
 
 [metadata.files]
 appdirs = [
@@ -780,6 +788,9 @@ jeepney = [
 jira = [
     {file = "jira-3.0.1-py3-none-any.whl", hash = "sha256:bc8d1dfeb51eb27ec90b455f2013e675b309dada00095936e65e0459a2f0df84"},
     {file = "jira-3.0.1.tar.gz", hash = "sha256:5bd8f4199632bf91fcfb4ba25ad2226991d403923b75f7cd2b051b4571492831"},
+]
+json2html = [
+    {file = "json2html-1.3.0.tar.gz", hash = "sha256:8951a53662ae9cfd812685facdba693fc950ffc1c1fd1a8a2d3cf4c34600689c"},
 ]
 keyring = [
     {file = "keyring-23.0.1-py3-none-any.whl", hash = "sha256:8f607d7d1cc502c43a932a275a56fe47db50271904513a379d39df1af277ac48"},
